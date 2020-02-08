@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+ <meta charset="utf-8">
+ <title>サイトタイトル</title>
+ <meta name="description" content="サイトキャプションを入力">
+ <meta name="keywords" content="サイトキーワードを,で区切って入力">
+ </head>
+<body>
+<h1>音声認識サービス！</h1>
+<p>使用方法</p>
+<p>喋りたい内容を喋った後に停止を押すと、下記に喋った内容が反映されるよ</p>
+<p id="status">ステータス：停止中</p>
+<button id="start">開始</button>
+<button id="stop">停止</button>
+<p>-----ここから下に喋った内容が追加されていくよ-----</p>
+<ul></ul>
+
+<script>
+  const sta = document.getElementById('start');
+  const sto = document.getElementById('stop');
+  const statu = document.getElementById('status');
+  const list = document.querySelector('ul')
+  SpeechRecognition = webkitSpeechRecognition;
+  //chromeかどうか判定
+  if (!'SpeechRecognition' in window) {
+    alert('音声認識を使用できません...');
+} 
+  let recognition = new SpeechRecognition();
+  recognition.continuous = true;
+
+  //認識した音声を入れる所
+  let talk = ''; 
+
+
+  recognition.onresult = (speak) => {
+    for (let i = speak.resultIndex; i < speak.results.length; i++) {
+     //音声を追加していく配列
+      let transcript = speak.results[i][0].transcript;
+      //音声を追加していく処理
+      if (speak.results[i].isFinal) {
+        talk += transcript;
+      } 
+    }
+    list.innerHTML = '<li>' + talk + '</li>';
+  }
+
+  //開始ボタン押した時の処理
+  sta.onclick = () => {
+    recognition.start();
+    statu.textContent = 'ステータス：録音中';
+  }
+  //停止ボタン押した時の処理
+  sto.onclick = () => {
+    recognition.stop();
+    statu.textContent = 'ステータス：停止中';
+  }
+</script>
+</body>
+</html>
